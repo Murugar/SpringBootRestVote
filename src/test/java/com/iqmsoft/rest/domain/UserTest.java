@@ -1,4 +1,4 @@
-package com.iqmsoft.domain;
+package com.iqmsoft.rest.domain;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package com.iqmsoft.domain;
+package com.iqmsoft.rest.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
