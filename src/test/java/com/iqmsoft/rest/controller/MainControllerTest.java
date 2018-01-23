@@ -3,6 +3,7 @@ package com.iqmsoft.rest.controller;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -67,23 +68,62 @@ public class MainControllerTest {
 		restTemplate = new RestTemplate();
 	}
 
-	
-	
-	
+	@Test
+	@WithMockUser(username = "user", password="user", authorities = { "USER" })
+	public void verifyRestaurants() throws Exception {
+		mockMvc.perform(get("/restaurants/all").
+				with(user("user").password("user").roles("USER")))
+		.andExpect(status().isOk())
+		.andExpect(authenticated().withUsername("user"));
+
+	}
 	
 	@Test
-	public void verifyRestaurants() throws Exception {
-		mockMvc.perform(get("/restaurants").with(httpBasic("admin", "admin")))
-		.andExpect(status().is4xxClientError())
-		.andExpect(authenticated().withUsername("admin"));
+	@WithMockUser(username = "user", password="user", authorities = { "USER" })
+	public void verifySortByCounter() throws Exception {
+		mockMvc.perform(get("/restaurants/all/sortbycounter").
+				with(user("user").password("user").roles("USER")))
+		.andExpect(status().isOk())
+		.andExpect(authenticated().withUsername("user"));
+
+	}
+	
+	@Test
+	@WithMockUser(username = "user", password="user", authorities = { "USER" })
+	public void verifySortByNameType() throws Exception {
+		mockMvc.perform(get("/restaurants/all/sortbyname/Indian").
+				with(user("user").password("user").roles("USER")))
+		.andExpect(status().isOk())
+		.andExpect(authenticated().withUsername("user"));
+
+	}
+	
+	@Test
+	@WithMockUser(username = "user", password="user", authorities = { "USER" })
+	public void verifySortByVoteType() throws Exception {
+		mockMvc.perform(get("/restaurants/all/sortbyvote/Chinese").
+				with(user("user").password("user").roles("USER")))
+		.andExpect(status().isOk())
+		.andExpect(authenticated().withUsername("user"));
+
+	}
+	
+	@Test
+	@WithMockUser(username = "user", password="user", authorities = { "USER" })
+	public void verifySortByName() throws Exception {
+		mockMvc.perform(get("/restaurants/all/sortbyname").
+				with(user("user").password("user").roles("USER")))
+		.andExpect(status().isOk())
+		.andExpect(authenticated().withUsername("user"));
 
 	}
 
 	@Test
 	@WithMockUser(username="admin", password="admin", roles={"USER","ADMIN"})
 	public void verifyVotesResults() throws Exception {
-		mockMvc.perform(get("/restaurants/votes/results").with(httpBasic("admin", "admin")))
-				.andExpect(status().is4xxClientError())
+		mockMvc.perform(get("/restaurants/votes/results").
+				with(user("admin").password("admin").roles("USER","ADMIN")))
+				.andExpect(status().isOk())
 				.andExpect(authenticated().withUsername("admin"));
 
 	}
@@ -91,7 +131,8 @@ public class MainControllerTest {
 	@Test
 	@WithMockUser(username="admin", password="admin", roles={"USER","ADMIN"})
 	public void verifyDeleteResults() throws Exception {
-		mockMvc.perform(delete("/restaurants/1").with(httpBasic("admin", "admin")))
+		mockMvc.perform(delete("/restaurants/find/1").
+				with(user("admin").password("admin").roles("USER","ADMIN")))
 				.andExpect(status().is4xxClientError())
 				.andExpect(authenticated().withUsername("admin"));
 
@@ -101,7 +142,7 @@ public class MainControllerTest {
 	
 	
 	 @Test
-	// @WithMockUser(username="admin", password="admin", roles={"USER","ADMIN"})
+	 @WithMockUser(username="admin", password="admin", roles={"USER","ADMIN"})
 	 public void testJWTFilter() throws Exception{
 	        // perform login
 	        User user = new User();
@@ -111,28 +152,27 @@ public class MainControllerTest {
 	                .content(mapper.writeValueAsString(user))
 	                .contentType(MediaType.APPLICATION_JSON)
 	                .accept(MediaType.APPLICATION_JSON))
-	                .andExpect(status().is4xxClientError())
+	                .andExpect(status().isOk())
 	                .andReturn();
 	        
 	       // User computer = mapper.readValue(loginResult.getResponse().getContentAsString(), 
 	        		//User.class);
 	        
 	        MockHttpServletResponse response = loginResult.getResponse();
-
-			
-	        
 	     
 	 }
 
 	@SuppressWarnings("deprecation")
 	@Test
 	public void requiresAuthentication() throws Exception {
-		mockMvc.perform(get("/")).andExpect(status().isMovedTemporarily());
+		mockMvc.perform(get("/")).andExpect(status().is4xxClientError());
 	}
 
 	@Test
 	public void httpBasicAuthenticationSuccess() throws Exception {
-		mockMvc.perform(get("/secure/something").with(httpBasic("admin", "admin"))).andExpect(status().isNotFound())
+		mockMvc.perform(get("/secure/something").
+				with(user("admin").password("admin").roles("USER","ADMIN")))
+		        .andExpect(status().isNotFound())
 				.andExpect(authenticated().withUsername("admin"));
 	}
 	
@@ -149,20 +189,10 @@ public class MainControllerTest {
 	 @Test
 	 @WithMockUser(username="admin", password="admin", roles={"USER","ADMIN"})
 	 public void testUnauthorizedRequest() throws Exception{
-	        mockMvc.perform(post("/restaurants").accept(MediaType.APPLICATION_JSON))
+	        mockMvc.perform(post("/restaurants/all").accept(MediaType.APPLICATION_JSON))
 	                .andExpect(status().is4xxClientError());
 	 }
 
 
-	@SuppressWarnings("deprecation")
-	@Configuration
-	@EnableWebMvcSecurity
-	@EnableWebMvc
-	static class Config extends WebSecurityConfigurerAdapter {
-		@Autowired
-		public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-			auth.inMemoryAuthentication().withUser("admin").password("admin").roles("ADMIN", "USER");
-		}
-	}
-
+	
 }
