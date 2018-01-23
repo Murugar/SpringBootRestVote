@@ -72,7 +72,7 @@ public class AllServiceTest {
 		
 		when(restaurantRepository.findAll()).thenReturn(list);
 		
-		List<Restaurant> result = restaurantService.getAllToDo();
+		List<Restaurant> result = restaurantService.getAll();
 		
 		assertEquals(result, list);
 		
@@ -87,7 +87,7 @@ public class AllServiceTest {
 		
 		when(userRepository.findAll()).thenReturn(list);
 		
-	    List<User> result = userService.getAllToDo();
+	    List<User> result = userService.getAll();
 		
 		assertEquals(result, list);
 		
@@ -102,7 +102,7 @@ public class AllServiceTest {
 		
 		when(voteRepository.findAll()).thenReturn(list);
 		
-		List<Vote> result = voteService.getAllToDo();
+		List<Vote> result = voteService.getAll();
 			
 		assertEquals(result, list);
 		
@@ -117,7 +117,7 @@ public class AllServiceTest {
 		
 		when(voteresultRepository.findAll()).thenReturn(list);
 		
-		List<VoteResult> result = voteresultService.getAllToDo();
+		List<VoteResult> result = voteresultService.getAll();
 		
 		assertEquals(result, list);
 		

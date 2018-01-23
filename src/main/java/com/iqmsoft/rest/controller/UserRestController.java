@@ -10,15 +10,23 @@ import org.springframework.web.bind.annotation.*;
 import com.iqmsoft.rest.entity.Role;
 import com.iqmsoft.rest.entity.User;
 import com.iqmsoft.rest.repository.UserRepository;
+import com.iqmsoft.rest.service.UserService;
+
+import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.Valid;
 import java.util.Collection;
 
+@Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserRestController {
 
     private final UserRepository userRepository;
+    
+    @Autowired
+    private UserService userService;
+   
 
     @Autowired
     public UserRestController(UserRepository userRepository) {
@@ -39,7 +47,7 @@ public class UserRestController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/reg")
     public User reg(@Valid @RequestBody User user) {
-        return userRepository.save(new User(user.getLogin(), user.getPassword(), Role.ROLE_USER));
+     	return userService.reg(user);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -77,12 +85,8 @@ public class UserRestController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    /*
-        Get effective role
-
-        The ROLE_USER is a default role
-        Only user with the role ROLE_ADMIN has permit to change user's role
-   */
+   
+    
     private Role effectiveRole(User user) {
 
         boolean hasAdminRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
