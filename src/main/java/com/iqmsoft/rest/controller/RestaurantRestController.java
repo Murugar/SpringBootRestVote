@@ -1,6 +1,8 @@
 package com.iqmsoft.rest.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,6 +58,13 @@ public class RestaurantRestController {
 		this.voteResultRepository = voteResultRepository;
 	}
 
+	
+	@RequestMapping(value = "/all/pages", method = RequestMethod.GET)
+	public ResponseEntity<Page<Restaurant>> readAllPageable(Pageable pageable) {
+		log.info("Getting All Restaurants By Page");
+		return new ResponseEntity<>(restaurantRepository.findAll(pageable), HttpStatus.OK);
+	}
+	
 	// @PreAuthorize("hasRole('ADMIN')")
 	@RequestMapping(value = "/all", method = RequestMethod.GET)
 	public ResponseEntity<Collection<Restaurant>> readAll() {
