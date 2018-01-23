@@ -117,7 +117,57 @@ public class MainControllerTest {
 		.andExpect(authenticated().withUsername("user"));
 
 	}
+	
+	@Test
+	@WithMockUser(username = "user", password="user", authorities = { "USER" })
+	public void verifyfindById() throws Exception {
+		mockMvc.perform(get("/restaurants/find/1").
+				with(user("user").password("user").roles("USER")))
+		.andExpect(status().isOk())
+		.andExpect(authenticated().withUsername("user"));
 
+	}
+	
+	@Test
+	@WithMockUser(username = "user", password="user", authorities = { "USER" })
+	public void verifySearchByType() throws Exception {
+		mockMvc.perform(get("/restaurants/search/Indian").
+				with(user("user").password("user").roles("USER")))
+		.andExpect(status().isOk())
+		.andExpect(authenticated().withUsername("user"));
+
+	}
+	
+	@Test
+	@WithMockUser(username = "user", password="user", authorities = { "USER" })
+	public void verifyGroupByType() throws Exception {
+		mockMvc.perform(get("/restaurants/groupbytype").
+				with(user("user").password("user").roles("USER")))
+		.andExpect(status().isOk())
+		.andExpect(authenticated().withUsername("user"));
+
+	}
+
+	@Test
+	@WithMockUser(username = "user", password="user", authorities = { "USER" })
+	public void verifyVotes() throws Exception {
+		mockMvc.perform(get("/restaurants/votes").
+				with(user("user").password("user").roles("USER")))
+		.andExpect(status().isOk())
+		.andExpect(authenticated().withUsername("user"));
+
+	}
+	
+	@Test
+	@WithMockUser(username = "user", password="user", authorities = { "USER" })
+	public void verifyVotesResult() throws Exception {
+		mockMvc.perform(get("/restaurants/votes/results").
+				with(user("user").password("user").roles("USER")))
+		.andExpect(status().isOk())
+		.andExpect(authenticated().withUsername("user"));
+
+	}
+	
 	@Test
 	@WithMockUser(username="admin", password="admin", roles={"USER","ADMIN"})
 	public void verifyVotesResults() throws Exception {
@@ -181,8 +231,8 @@ public class MainControllerTest {
 	@Test
 	@WithMockUser(username="admin", password="admin", roles={"USER","ADMIN"})
 	public void testUnauthRequest() throws Exception{
-		        mockMvc.perform(post("/restaurants/1/vote/1").accept(MediaType.APPLICATION_JSON))
-		                .andExpect(status().is4xxClientError());
+		        mockMvc.perform(post("/restaurants/givevote/1/vote/1").accept(MediaType.APPLICATION_JSON))
+		                .andExpect(status().isOk());
 	}	
 		
 	
