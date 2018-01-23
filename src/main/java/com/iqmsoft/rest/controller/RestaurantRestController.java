@@ -62,6 +62,18 @@ public class RestaurantRestController {
 		log.info("Getting All Restaurants");
 		return new ResponseEntity<>(rs.getAll(), HttpStatus.OK);
 	}
+	
+	@RequestMapping(value = "/all/sortbyname", method = RequestMethod.GET)
+	public ResponseEntity<Collection<Restaurant>> readByNameAll() {
+		log.info("Getting All Restaurants");
+		return new ResponseEntity<>(restaurantRepository.findAllByOrderByNameDesc(), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/all/sortbycounter", method = RequestMethod.GET)
+	public ResponseEntity<Collection<Restaurant>> readByCounterAll() {
+		log.info("Getting All Restaurants");
+		return new ResponseEntity<>(restaurantRepository.findAllByOrderByCounterDesc(), HttpStatus.OK);
+	}
 
 	@RequestMapping(value = "/all/sortbyname/{type}", method = RequestMethod.GET)
 	public ResponseEntity<Collection<Restaurant>> readAllSortByAge(@PathVariable String type) {

@@ -1,5 +1,7 @@
 package com.iqmsoft.rest.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.iqmsoft.rest.entity.Restaurant;
@@ -14,5 +16,10 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
    
     List<Restaurant> findByTypeOrderByCounterDesc(String type);
     List<Restaurant> findByTypeOrderByNameDesc(String type);
+    
+    List<Restaurant> findAllByOrderByNameDesc();
+    List<Restaurant> findAllByOrderByCounterDesc();
+    
+    Page<Restaurant> findAll(Pageable pageable);
  
 }
